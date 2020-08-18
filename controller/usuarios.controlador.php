@@ -48,6 +48,27 @@ class ControladorUsuarios{
             return;
         }
 
+        /* ------ ------ ------ ------ */
+        /* VALIDAR SU CORREO INGRESA EXISTE EN BASE DE DATOS */
+        /* ------ ------ ------ ------ */
+
+        $usuarios = ModeloUsuarios::index($tabla);
+        foreach ($usuarios as $key => $value) {
+            if ($value["correo"] == $datos["correo"]) {
+                $json = array(
+                
+                    "status"    => 404,
+                    "detalle"   => "Correo existe en sistema"
+                );
+                
+                echo json_encode($json, true);
+        
+                return;
+            }
+        }
+
+
+
         if (isset($datos["password"]) && !preg_match("/^(?=.*\d)(?=.*[@#\-_$%^&+=§!\?])(?=.*[a-z])(?=.*[A-Z])[0-9A-Za-z@#\-_$%^&+=§!\?]{8,20}$/",$datos["password"])) {
 
             $json = array(

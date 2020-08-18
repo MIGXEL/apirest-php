@@ -47,7 +47,7 @@ class ModeloUsuarios {
         $stmt = Conexion::conectar() -> prepare("SELECT * FROM $tabla");
 
         if ($stmt -> execute()) {
-            return $stmt -> fetchAll(PDO::FETCH_CLASS);
+            return $stmt -> fetchAll();
         }else{
 
             print_r(Conexion::conectar()->errorInfo());
