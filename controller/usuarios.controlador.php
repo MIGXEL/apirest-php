@@ -129,7 +129,7 @@ class ControladorUsuarios{
 
     }
 
-    public function show(){
+    public function index(){
 
         $tabla = 'usuarios';
 
@@ -147,9 +147,7 @@ class ControladorUsuarios{
         return;
     }
 
-    public function login($datos){
-
-        
+    public function login($datos){        
 
         $tabla = 'usuarios';
 
@@ -175,7 +173,8 @@ class ControladorUsuarios{
             $usuario = array(
                 "nombre"        => $login["nombre"],
                 "apellido"      => $login["apellido"],
-                "correo"        => $login["correo"]
+                "correo"        => $login["correo"],
+                "token"         => $login["token"]
             );
 
             $json = array(

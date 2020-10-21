@@ -1,11 +1,15 @@
 <?php
 
 class ControladorTareas{
-
+    
+    /* ------ ------ ------ ------ */
+    /* SOLICITAR AL MODELO MOSTRAR TODAS LAS TAREAS */
+    /* ------ ------ ------ ------ */
     public function index(){
+        
+        $tabla = "tareas";
 
-
-        $tareas = ModeloTareas::index("cursos");
+        $tareas = ModeloTareas::index($tabla);
 
 
         $json = array(
@@ -20,16 +24,40 @@ class ControladorTareas{
         return;
     }
 
-    public function create(){
+    public function create($datos){
 
-        $json = array(
-            
-            "detalle" => "Tareas creada exitosamente"
+        $tabla = "tareas";
+
+        /* ------ ------ ------ ------ */
+        /* LLEVAR DATOS AL MODELO */
+        /* ------ ------ ------ ------ */
+
+        $datos = array(
+
+            "id_usuario"    => $_POST["id_usuario"],
+            "titulo"        => $_POST["titulo"],
+            "descripcion"   => $_POST["descripcion"],
+            "created_at"    => date("Y-m-d H:i:s"),
+            "updated_at"    => date('Y-m-d H:i:s')
         );
-        
-        echo json_encode($json, true);
 
-        return;
+        $create = ModeloTareas::create($tabla, $datos);    
+        
+        /* ------ ------ ------ ------ */
+        /* RECIBIR RESPUESTA DEL MODELO */
+        /* ------ ------ ------ ------ */
+        if ($create == "ok") {
+
+            $json = array(
+                
+                "status"    => 200,
+                "detalle"   => "Tarea creada exitosamente"
+            );
+            
+            echo json_encode($json, true);
+    
+            return;
+        }
     }
 
     public function show($id){

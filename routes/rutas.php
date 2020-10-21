@@ -4,6 +4,8 @@ $rutasArray = explode("/", $_SERVER['REQUEST_URI']);
 /* echo '<pre>'; print_r(array_filter($rutasArray));echo '</pre>';
 return; */
 
+$pass = 'Cg.2020$';
+
 
 if (count(array_filter($rutasArray)) == 0) {
 
@@ -41,14 +43,17 @@ if (count(array_filter($rutasArray)) == 0) {
 
             if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == "POST") {
 
-                $datos = array(
-                    "nombre" => $_POST["nombre"],
-                    "apellido" => $_POST["apellido"],
-                    "correo" => $_POST["correo"],
-                    "password" => $_POST["password"]
-                );
+                    $datos = array(
+                        "nombre" => $_POST["nombre"],
+                        "apellido" => $_POST["apellido"],
+                        "correo" => $_POST["correo"],
+                        "password" => 'Cabrera2020$'
+                    );
+    
+                    $usuario->create($datos);
+                
 
-                $usuario->create($datos);
+                
             }
 
             /* ------ ------ ------ ------ */
@@ -73,8 +78,7 @@ if (count(array_filter($rutasArray)) == 0) {
 
             if (isset($_SERVER["REQUEST_METHOD"]) && $_SERVER["REQUEST_METHOD"] == "POST") {
 
-               
-
+                
                 $datos = array(
                     "correo" => $_POST["correo"],
                     "password" => $_POST["password"]
@@ -87,13 +91,29 @@ if (count(array_filter($rutasArray)) == 0) {
         }
 
         /* ------ ------ ------ ------ */
-        /*  */
+        /* CONSULTANDO API POR RUTA USUARIO */
+        /* ------ ------ ------ ------ */
+
+        if (array_filter($rutasArray)[1] == 'usuarios') {
+            
+            /* ------ ------ ------ ------ */
+            /* SOLICITANDO INFORMACION DE LOS USUARIOS POR METODO GET */
+            /* ------ ------ ------ ------ */
+
+            if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == "GET") {
+
+                $usuario->index();
+            }
+        }
+
+        /* ------ ------ ------ ------ */
+        /* CONSULTANDO API POR RUTA TAREAS */
         /* ------ ------ ------ ------ */
 
         if (array_filter($rutasArray)[1] == 'tareas') {
 
             /* ------ ------ ------ ------ */
-            /*  */
+            /* SOLICITANDO INFORMACION DE LAS TAREAS POR METODO GET */
             /* ------ ------ ------ ------ */
 
             if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == "GET") {
@@ -102,12 +122,18 @@ if (count(array_filter($rutasArray)) == 0) {
             }
 
             /* ------ ------ ------ ------ */
-            /*  */
+            /* CREAR TAREA POR METODO POST */
             /* ------ ------ ------ ------ */
 
             if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == "POST") {
 
-                $tareas->create();
+                $datos = array(
+                    "id_usuario" => $_POST["id_usuario"],
+                    "titulo" => $_POST["titulo"],
+                    "descripcion" => $_POST["descripcion"]
+                );
+
+                $tareas->create($datos);
             }
         }
     } else {

@@ -47,7 +47,9 @@ class ModeloUsuarios {
         $stmt = Conexion::conectar() -> prepare("SELECT * FROM $tabla");
 
         if ($stmt -> execute()) {
+
             return $stmt -> fetchAll();
+            
         }else{
 
             print_r(Conexion::conectar()->errorInfo());
