@@ -4,7 +4,7 @@ $rutasArray = explode("/", $_SERVER['REQUEST_URI']);
 /* echo '<pre>'; print_r(array_filter($rutasArray));echo '</pre>';
 return; */
 
-$pass = 'Cg.2020$';
+
 
 
 if (count(array_filter($rutasArray)) == 0) {
@@ -19,14 +19,14 @@ if (count(array_filter($rutasArray)) == 0) {
 } else {
 
     /* ------ ------ ------ ------ */
-    /* INstanciando clases de controladores */
+    /* INSTANCIAS DE LAS CLASES */
     /* ------ ------ ------ ------ */
 
     $usuario = new ControladorUsuarios();
     $tareas = new ControladorTareas();
 
     /* ------ ------ ------ ------ */
-    /*  */
+    /* CONSULTA POR CANTIDAD DE RUTAS */
     /* ------ ------ ------ ------ */
 
     if (count(array_filter($rutasArray)) == 1) {
@@ -44,25 +44,16 @@ if (count(array_filter($rutasArray)) == 0) {
             if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == "POST") {
 
                     $datos = array(
-                        "nombre" => $_POST["nombre"],
-                        "apellido" => $_POST["apellido"],
-                        "correo" => $_POST["correo"],
-                        "password" => 'Cabrera2020$'
+                        "nombre"    => $_POST["nombre"],
+                        "apellido"  => $_POST["apellido"],
+                        "correo"    => $_POST["correo"],
+                        "password"  => 'Cabrera2020$'                        
                     );
     
                     $usuario->create($datos);
                 
 
                 
-            }
-
-            /* ------ ------ ------ ------ */
-            /*  */
-            /* ------ ------ ------ ------ */
-
-            if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == "GET") {
-
-                $usuario->show();
             }
         }
 
@@ -104,6 +95,9 @@ if (count(array_filter($rutasArray)) == 0) {
 
                 $usuario->index();
             }
+
+            
+
         }
 
         /* ------ ------ ------ ------ */
@@ -139,9 +133,46 @@ if (count(array_filter($rutasArray)) == 0) {
     } else {
 
         /* ------ ------ ------ ------ */
-        /*  */
+        /* CONSULTANDO API RUTA USUARIO POR UN SOLO REGISTRO */
         /* ------ ------ ------ ------ */
+        if (array_filter($rutasArray)[1] == 'usuario' && is_numeric(array_filter($rutasArray)[2])) {
 
+            /* ------ ------ ------ ------ */
+            /* RUTA GET PARA SOLICITAR UN SOLO REGISTRO */
+            /* ------ ------ ------ ------ */
+
+            if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == "GET") {
+
+                $usuario->show(array_filter($rutasArray)[2]);
+            }
+
+            /* ------ ------ ------ ------ */
+            /* RUTA PUT PARA ACTUALIZAR UN SOLO REGISTRO */
+            /* ------ ------ ------ ------ */
+
+            if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == "PUT") {
+
+                /* se crea un array vacio*/
+                $datos = array();
+                /*se reciben los datos del PUT y se Parsean para poner en array creado*/
+                parse_str(file_get_contents('php://input'), $datos);
+                /* Se envian los datos al controlador*/
+                $usuario->update(array_filter($rutasArray)[2], $datos);
+            }
+
+            /* ------ ------ ------ ------ */
+            /* RUTA DELETE PARA ELIMINAR UN SOLO REGISTRO */
+            /* ------ ------ ------ ------ */
+
+            if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == "DELETE") {
+
+                $usuario->delete(array_filter($rutasArray)[2]);
+            }
+        }
+
+        /* ------ ------ ------ ------ */
+        /* CONSULTANDO API RUTA TAREAS POR UN SOLO REGISTRO */
+        /* ------ ------ ------ ------ */
         if (array_filter($rutasArray)[1] == 'tareas' && is_numeric(array_filter($rutasArray)[2])) {
 
             /* ------ ------ ------ ------ */
@@ -171,5 +202,6 @@ if (count(array_filter($rutasArray)) == 0) {
                 $tareas->delete(array_filter($rutasArray)[2]);
             }
         }
+
     }
 }

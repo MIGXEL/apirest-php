@@ -2,13 +2,19 @@
 
 class ControladorUsuarios{
 
+    /* ------ ------ ------ ------ */
+    /* FUNCION CREATE CONTROLADOR ENVIA DATOS AL MODELO PARA CREAR REGISTRO */
+    /* ------ ------ ------ ------ */
     public function create($datos){
         
         $tabla = 'usuarios';
+        
         /* ------ ------ ------ ------ */
         /* VALIDAR DATOS RECIBIDOS */
         /* ------ ------ ------ ------ */
 
+        
+        /* VALIDANDO DATO NOMBRE */
         if (isset($datos["nombre"]) && !preg_match("/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/", $datos["nombre"])) {
             
             $json = array(
@@ -21,7 +27,7 @@ class ControladorUsuarios{
     
             return;
         }
-
+        /* VALIDANDO DATO APELLIDO */
         if (isset($datos["apellido"]) && !preg_match("/^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/", $datos["apellido"])) {
             
             $json = array(
@@ -34,7 +40,7 @@ class ControladorUsuarios{
     
             return;
         }
-
+        /* VALIDANDO DATO CORREO */
         if (isset($datos["correo"]) && !preg_match("/^[^0-9][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[@][a-zA-Z0-9_]+([.][a-zA-Z0-9_]+)*[.][a-zA-Z]{2,4}$/", $datos["correo"])) {
             
             $json = array(
@@ -52,8 +58,8 @@ class ControladorUsuarios{
         /* VALIDAR SU CORREO INGRESA EXISTE EN BASE DE DATOS */
         /* ------ ------ ------ ------ */
 
-        $usuarios = ModeloUsuarios::index($tabla);
-        foreach ($usuarios as $key => $value) {
+        $correos = ModeloUsuarios::checkEmail($tabla);
+        foreach ($correos as $key => $value) {
             if ($value["correo"] == $datos["correo"]) {
                 $json = array(
                 
@@ -68,7 +74,7 @@ class ControladorUsuarios{
         }
 
 
-
+        /* VALIDANDO DATO PASSWORD */
         if (isset($datos["password"]) && !preg_match("/^(?=.*\d)(?=.*[@#\-_$%^&+=§!\?])(?=.*[a-z])(?=.*[A-Z])[0-9A-Za-z@#\-_$%^&+=§!\?]{8,20}$/",$datos["password"])) {
 
             $json = array(
@@ -129,17 +135,39 @@ class ControladorUsuarios{
 
     }
 
+    /* ------ ------ ------ ------ */
+    /* FUNCION INDEX CONTROLADOR SOLICITA TODOS LOS USUARIOS AL MODELO */
+    /* ------ ------ ------ ------ */
     public function index(){
 
         $tabla = 'usuarios';
-
-        $index = ModeloUsuarios::index($tabla);
-
+        $usuarios   = ModeloUsuarios::index($tabla);
         $json = array(
             
             "status" => 200,
-            "total registros" => count($index),
-            "detalle" => $index
+            "total registros" => count($usuarios),
+            "detalle" => $usuarios
+        );
+        echo json_encode($json, true);
+
+        return;
+
+        
+    }
+
+    /* ------ ------ ------ ------ */
+    /* FUNCION SHOW CONTROLADOR SOLICITA UN RESGISTRO AL MODELO */
+    /* ------ ------ ------ ------ */
+    public function show($id){
+
+        $tabla  = 'usuarios';
+        $tabla2 = 'roles';        
+
+        $usuario = ModeloUsuarios::show($tabla, $tabla2, $id);
+        $json = array(
+            
+            "status" => 200,
+            "detalle" => $usuario
         );
 
         echo json_encode($json, true);
@@ -147,35 +175,50 @@ class ControladorUsuarios{
         return;
     }
 
+    /* ------ ------ ------ ------ */
+    /* FUNCION UPDATE CONTROLADOR ENVIA DATOS AL MODELO PARA ACTUALIZAR REGISTRO */
+    /* ------ ------ ------ ------ */
+    public function update($id, $datos){
+
+        $tabla  = 'usuarios';
+        echo '<pre> desde el controlador'; print_r($datos);echo '</pre>';
+        return;
+
+        $usuario = ModeloUsuarios::show($tabla, $tabla2, $id);
+        $json = array(
+            
+            "status" => 200,
+            "total registros" => count($usuario),
+            "detalle" => $usuario
+        );
+
+        echo json_encode($json, true);
+
+        return;
+    }
+
+    /* ------ ------ ------ ------ */
+    /* FUNCION LOGIN CONTROLADOR */
+    /* ------ ------ ------ ------ */
     public function login($datos){        
 
-        $tabla = 'usuarios';
+        $tabla  = 'usuarios';
+        $tabla2 = 'roles';
 
         /* ------ ------ ------ ------ */
-        /* HASHEAR PASSWORD Y CREAR TOKEN */
+        /* CONCATENAR PASSWORD Y CORREO DEL CLIENTE */
         /* ------ ------ ------ ------ */
-
-        /* $password   = password_hash($datos["password"], PASSWORD_DEFAULT); */
         $verificar = $datos["password"].$datos["correo"];
 
         /* ------ ------ ------ ------ */
-        /* LLEVAR DATOS AL MODELO */
+        /* LLEVAR DATOS AL MODELO Y OBTENER INFORMACION DEL CLIENTE */
         /* ------ ------ ------ ------ */
+        $usuario = ModeloUsuarios::login($tabla, $tabla2, $datos);
 
-        $login = ModeloUsuarios::login($tabla, $datos);    
-        
         /* ------ ------ ------ ------ */
-        /* RECIBIR RESPUESTA DEL MODELO */
-        /* ------ ------ ------ ------ */
-        
-        if(password_verify($verificar, $login["token"])){
-
-            $usuario = array(
-                "nombre"        => $login["nombre"],
-                "apellido"      => $login["apellido"],
-                "correo"        => $login["correo"],
-                "token"         => $login["token"]
-            );
+        /* VERIFICAR USUARIO POR TOKEN */
+        /* ------ ------ ------ ------ */        
+        if(password_verify($verificar, $usuario["token"])){
 
             $json = array(
             

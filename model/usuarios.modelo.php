@@ -42,13 +42,16 @@ class ModeloUsuarios {
         $stmt = null;
     }
 
+    /* ------ ------ ------ ------ */
+    /* CONSULTAR TODOS LOS USUARIOS A BASE DE DATOS */
+    /* ------ ------ ------ ------ */
     static public function index($tabla){
 
         $stmt = Conexion::conectar() -> prepare("SELECT * FROM $tabla");
 
         if ($stmt -> execute()) {
 
-            return $stmt -> fetchAll();
+            return $stmt -> fetchAll(PDO::FETCH_CLASS);
             
         }else{
 
@@ -59,14 +62,85 @@ class ModeloUsuarios {
         $stmt = null;
     }
 
-    static public function login($tabla, $datos){
+    /* ------ ------ ------ ------ */
+    /* CONSULTAR USUARIO A BASE DE DATOS SEGUN ID */
+    /* ------ ------ ------ ------ */
+    static public function show($tabla, $tabla2, $id){
+                
+        $stmt = Conexion::conectar() -> prepare("SELECT $tabla.id, $tabla.nombre, $tabla.apellido, $tabla.titulo_profesion, $tabla.correo, $tabla.token, $tabla.created_at as fecha_creación, $tabla2.rol 
+                                        FROM $tabla INNER JOIN $tabla2 ON $tabla2.id = $tabla.id_rol WHERE $tabla.id = :id");
 
-        $stmt = Conexion::conectar() -> prepare("SELECT * FROM $tabla WHERE correo = :correo");
+        $stmt -> bindParam(":id", $id, PDO::PARAM_INT);
+        
+        if ($stmt -> execute()) {
+
+            return $stmt -> fetch(PDO::FETCH_ASSOC);
+            
+        }else{
+
+            print_r(Conexion::conectar()->errorInfo());
+        }
+
+        $stmt -> close();
+        $stmt = null;
+    }
+
+    /* ------ ------ ------ ------ */
+    /* ACTUALIZAR USUARIO EN BASE DE DATOS SEGUN ID */
+    /* ------ ------ ------ ------ */
+    static public function update($tabla, $tabla2, $id){
+        echo '<pre>'; print_r($id);echo '</pre>';
+        return;
+        $stmt = Conexion::conectar() -> prepare("SELECT $tabla.id, $tabla.nombre, $tabla.apellido, $tabla.titulo_profesion, $tabla.correo, $tabla.token, $tabla.created_at as fecha_creación, $tabla2.rol 
+                                        FROM $tabla INNER JOIN $tabla2 ON $tabla2.id = $tabla.id_rol WHERE $tabla.id = :id");
+
+        $stmt -> bindParam(":id", $id, PDO::PARAM_INT);
+        /* echo '<pre>'; print_r($id);echo '</pre>';
+        return; */
+        if ($stmt -> execute()) {
+
+            return $stmt -> fetch(PDO::FETCH_ASSOC);
+            
+        }else{
+
+            print_r(Conexion::conectar()->errorInfo());
+        }
+
+        $stmt -> close();
+        $stmt = null;
+    }
+
+    /* ------ ------ ------ ------ */
+    /* CONSULTAR REGISTRO USUARIO A BASE DE DATOS */
+    /* ------ ------ ------ ------ */
+    static public function login($tabla, $tabla2, $datos){
+
+        $stmt = Conexion::conectar() -> prepare("SELECT $tabla.id, $tabla.nombre, $tabla.apellido, $tabla.titulo_profesion, $tabla.correo, $tabla.token, $tabla2.rol 
+                                                FROM $tabla INNER JOIN $tabla2 ON $tabla2.id = $tabla.id_rol WHERE $tabla.correo = :correo");
 
         $stmt -> bindParam(":correo", $datos["correo"], PDO::PARAM_STR);
+        if ($stmt -> execute()) {
+            return $stmt -> fetch(PDO::FETCH_ASSOC);
+        }else{
+
+            print_r(Conexion::conectar()->errorInfo());
+        }
+
+        $stmt -> close();
+        $stmt = null;
+    }
+
+    /* ------ ------ ------ ------ */
+    /* OBTENER CORREO PARA VERIFICAR EXISTENCIA */
+    /* ------ ------ ------ ------ */
+    static public function checkEmail($tabla){
+
+        $stmt = Conexion::conectar() -> prepare("SELECT correo FROM $tabla");
 
         if ($stmt -> execute()) {
-            return $stmt -> fetch();
+
+            return $stmt -> fetchAll();
+            
         }else{
 
             print_r(Conexion::conectar()->errorInfo());
