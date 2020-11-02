@@ -74,6 +74,7 @@ if (count(array_filter($rutasArray)) == 0) {
                     "correo" => $_POST["correo"],
                     "password" => $_POST["password"]
                 );
+                
                 $usuario->login($datos);
             }
             
@@ -167,6 +168,7 @@ if (count(array_filter($rutasArray)) == 0) {
             if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == "DELETE") {
 
                 $usuario->delete(array_filter($rutasArray)[2]);
+                
             }
         }
 
