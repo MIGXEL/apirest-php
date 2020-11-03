@@ -142,7 +142,9 @@ class ControladorUsuarios{
     public function index(){
 
         $tabla = 'usuarios';
-        $usuarios   = ModeloUsuarios::index($tabla);
+        $tabla2 = 'roles';
+        
+        $usuarios   = ModeloUsuarios::index($tabla, $tabla2);
         $json = array(
             
             "status" => 200,

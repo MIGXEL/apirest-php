@@ -46,9 +46,10 @@ class ModeloUsuarios {
     /* ------ ------ ------ ------ */
     /* CONSULTAR TODOS LOS USUARIOS A BASE DE DATOS */
     /* ------ ------ ------ ------ */
-    static public function index($tabla){
+    static public function index($tabla, $tabla2){
 
-        $stmt = Conexion::conectar() -> prepare("SELECT * FROM $tabla");
+        $stmt = Conexion::conectar() -> prepare("SELECT $tabla.id, $tabla.nombre, $tabla.apellido, $tabla.titulo_profesion, $tabla.correo, $tabla.token, $tabla.created_at as fecha_creación, $tabla2.rol 
+        FROM $tabla INNER JOIN $tabla2 ON $tabla2.id = $tabla.id_rol");
 
         if ($stmt -> execute()) {
 

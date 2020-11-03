@@ -8,8 +8,10 @@ class ControladorTareas{
     public function index(){
         
         $tabla = "tareas";
+        $tabla2 = "usuarios";
+        $tabla3 = "empresas";
 
-        $tareas = ModeloTareas::index($tabla);
+        $tareas = ModeloTareas::index($tabla, $tabla2, $tabla3);
 
 
         $json = array(
@@ -34,11 +36,13 @@ class ControladorTareas{
 
         $datos = array(
 
-            "id_usuario"    => $_POST["id_usuario"],
-            "titulo"        => $_POST["titulo"],
-            "descripcion"   => $_POST["descripcion"],
-            "created_at"    => date("Y-m-d H:i:s"),
-            "updated_at"    => date('Y-m-d H:i:s')
+            "id_usuario"        => $_POST["id_usuario"],
+            "titulo"            => $_POST["titulo"],
+            "descripcion"       => $_POST["descripcion"],
+            "fecha_inicio"      => 3131313131321,
+            "fecha_termino"     => 1321321321321,
+            "created_at"        => date("Y-m-d H:i:s"),
+            "updated_at"        => date('Y-m-d H:i:s')
         );
 
         $create = ModeloTareas::create($tabla, $datos);    
