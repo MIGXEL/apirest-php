@@ -8,15 +8,18 @@ class ModeloTareas {
     /* ------ ------ CREAR TAREAS ------ ------ */
     
     static public function create($tabla, $datos){        
+        echo '<pre>'; print_r($datos);echo '</pre>';
         
-        $stmt = Conexion::conectar() -> prepare("INSERT INTO $tabla (id_usuario, titulo, descripcion, fecha_inicio, fecha_termino, created_at, updated_at) 
-        VALUES (:id_usuario, :titulo, :descripcion, :fecha_inicio, :fecha_termino, :created_at, :updated_at)");
+        $stmt = Conexion::conectar() -> prepare("INSERT INTO $tabla (id_usuario, titulo, descripcion, id_empresa, estado, fecha_inicio, fecha_termino, created_at, updated_at) 
+                                                VALUES (:id_usuario, :titulo, :descripcion, :id_empresa, :estado, :fecha_inicio, :fecha_termino, :created_at, :updated_at)");
 
         $stmt -> bindParam(":id_usuario", $datos["id_usuario"], PDO::PARAM_INT);
         $stmt -> bindParam(":titulo", $datos["titulo"], PDO::PARAM_STR);
         $stmt -> bindParam(":descripcion", $datos["descripcion"], PDO::PARAM_STR);
-        $stmt -> bindParam(":fecha_incio", $datos["fecha_incio"], PDO::PARAM_STR);
-        $stmt -> bindParam(":fecha_termino", $datos["fecha_termino"], PDO::PARAM_STR);
+        $stmt -> bindParam(":id_empresa", $datos["id_empresa"], PDO::PARAM_INT);
+        $stmt -> bindParam(":estado", $datos["estado"], PDO::PARAM_INT);
+        $stmt -> bindParam(":fecha_inicio", $datos["fecha_inicio"], PDO::PARAM_INT);
+        $stmt -> bindParam(":fecha_termino", $datos["fecha_termino"], PDO::PARAM_INT);
         $stmt -> bindParam(":created_at", $datos["created_at"], PDO::PARAM_STR);
         $stmt -> bindParam(":updated_at", $datos["updated_at"], PDO::PARAM_STR);
 

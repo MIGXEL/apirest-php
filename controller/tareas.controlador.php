@@ -30,26 +30,24 @@ class ControladorTareas{
 
         $tabla = "tareas";
 
-        /* ------ ------ ------ ------ */
-        /* LLEVAR DATOS AL MODELO */
-        /* ------ ------ ------ ------ */
-
+        /* CREACION DE ARRAY DATOS DE TAREA PARA ENVIAR AL MODELO */
         $datos = array(
 
-            "id_usuario"        => $_POST["id_usuario"],
-            "titulo"            => $_POST["titulo"],
-            "descripcion"       => $_POST["descripcion"],
-            "fecha_inicio"      => 3131313131321,
-            "fecha_termino"     => 1321321321321,
-            "created_at"        => date("Y-m-d H:i:s"),
-            "updated_at"        => date('Y-m-d H:i:s')
+            "id_usuario"    => $_POST["id_usuario"],
+            "titulo"        => $_POST["titulo"],
+            "id_empresa"    => $_POST["id_empresa"],
+            "descripcion"   => $_POST["descripcion"],
+            "fecha_inicio"  => $_POST["fecha_inicio"],
+            "fecha_termino" => $_POST["fecha_termino"],
+            "estado"        => $_POST["estado"],
+            "created_at"    => date("Y-m-d H:i:s"),
+            "updated_at"    => date('Y-m-d H:i:s')
         );
-
-        $create = ModeloTareas::create($tabla, $datos);    
         
-        /* ------ ------ ------ ------ */
+        /* LLEVAR ARRAY DE DATOS AL MODELO */
+        $create = ModeloTareas::create($tabla, $datos);    
+       
         /* RECIBIR RESPUESTA DEL MODELO */
-        /* ------ ------ ------ ------ */
         if ($create == "ok") {
 
             $json = array(
