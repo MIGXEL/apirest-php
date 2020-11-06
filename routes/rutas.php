@@ -175,10 +175,10 @@ if (count(array_filter($rutasArray)) == 0) {
         /* ------ ------ ------ ------ */
         /* CONSULTANDO API RUTA TAREAS POR UN SOLO REGISTRO */
         /* ------ ------ ------ ------ */
-        if (array_filter($rutasArray)[1] == 'tareas' && is_numeric(array_filter($rutasArray)[2])) {
+        if (array_filter($rutasArray)[1] == 'tarea' && is_numeric(array_filter($rutasArray)[2])) {
 
             /* ------ ------ ------ ------ */
-            /*  */
+            /* RUTA GET PARA SOLICITAR UNA TAREA */
             /* ------ ------ ------ ------ */
 
             if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == "GET") {
@@ -187,16 +187,21 @@ if (count(array_filter($rutasArray)) == 0) {
             }
 
             /* ------ ------ ------ ------ */
-            /*  */
+            /* RUTA PUT PARA SOLICITAR ACTUALIZACION UNA TAREA */
             /* ------ ------ ------ ------ */
 
             if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == "PUT") {
 
-                $tareas->update(array_filter($rutasArray)[2]);
+                /* se crea un array vacio*/
+                $datos = array();
+                /*se reciben los datos del PUT y se Parsean para poner en array creado*/
+                parse_str(file_get_contents('php://input'), $datos);
+                /* Se envian los datos al controlador*/
+                $tareas->update(array_filter($rutasArray)[2], $datos);
             }
 
             /* ------ ------ ------ ------ */
-            /*  */
+            /* RUTA DELETE PARA SOLICITAR ELIMINAR UNA TAREA */
             /* ------ ------ ------ ------ */
 
             if (isset($_SERVER['REQUEST_METHOD']) && $_SERVER['REQUEST_METHOD'] == "DELETE") {

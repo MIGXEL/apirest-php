@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.3
+-- version 4.9.1
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 04-11-2020 a las 17:45:01
--- Versión del servidor: 10.4.14-MariaDB
--- Versión de PHP: 7.4.11
+-- Tiempo de generación: 06-11-2020 a las 17:39:42
+-- Versión del servidor: 10.4.8-MariaDB
+-- Versión de PHP: 7.3.10
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -47,6 +48,27 @@ INSERT INTO `empresas` (`id`, `rut`, `nombre`, `direccion`, `sigla`, `created_at
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `estados`
+--
+
+CREATE TABLE `estados` (
+  `id` int(11) NOT NULL,
+  `estado` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Volcado de datos para la tabla `estados`
+--
+
+INSERT INTO `estados` (`id`, `estado`) VALUES
+(1, 'Inicio'),
+(2, 'Proceso'),
+(3, 'Pendiente'),
+(4, 'Completada');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `roles`
 --
 
@@ -76,9 +98,9 @@ CREATE TABLE `tareas` (
   `descripcion` text NOT NULL,
   `observacion` text DEFAULT NULL,
   `id_empresa` int(11) DEFAULT NULL,
-  `estado` int(11) DEFAULT NULL,
-  `fecha_inicio` datetime DEFAULT NULL,
-  `fecha_termino` datetime DEFAULT NULL,
+  `id_estado` int(11) DEFAULT NULL,
+  `fecha_inicio` varchar(25) DEFAULT NULL,
+  `fecha_termino` varchar(25) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -87,10 +109,11 @@ CREATE TABLE `tareas` (
 -- Volcado de datos para la tabla `tareas`
 --
 
-INSERT INTO `tareas` (`id`, `id_usuario`, `titulo`, `descripcion`, `observacion`, `id_empresa`, `estado`, `fecha_inicio`, `fecha_termino`, `created_at`, `updated_at`) VALUES
-(3, 4, 'Revisar equipo escaner', 'Equipo escaner sin acceso en la red, por ende no se pueden realizar escaners', NULL, 1, NULL, NULL, NULL, '2020-09-02 20:28:41', '2020-09-02 20:28:41'),
-(4, 4, 'Instalacion y configuración de escaner', 'Apoyar en la instalación y configuración de nuevo equipo de escaner en oficina de recepción', NULL, 1, NULL, NULL, NULL, '2020-09-02 20:41:33', '2020-09-02 20:41:33'),
-(5, 4, 'Hola Mundo', 'como estan todos en casa', NULL, NULL, NULL, NULL, NULL, '2020-10-01 01:19:25', '2020-10-01 01:19:25');
+INSERT INTO `tareas` (`id`, `id_usuario`, `titulo`, `descripcion`, `observacion`, `id_empresa`, `id_estado`, `fecha_inicio`, `fecha_termino`, `created_at`, `updated_at`) VALUES
+(3, 4, 'Revisar equipo escaner', 'Equipo escaner sin acceso en la red, por ende no se pueden realizar escaners', NULL, 1, 4, NULL, NULL, '2020-09-02 20:28:41', '2020-09-02 20:28:41'),
+(4, 4, 'Instalacion y configuración de escaner', 'Apoyar en la instalación y configuración de nuevo equipo de escaner en oficina de recepción', NULL, 1, 4, NULL, NULL, '2020-09-02 20:41:33', '2020-09-02 20:41:33'),
+(9, 5, 'Informe Tecnico', 'Realizar informe tecnico estado de Equipo Calidad por sufrir caida de agua', NULL, 1, 1, '1603767600000', '1604286000000', '2020-11-06 00:17:18', '2020-11-06 00:17:18'),
+(10, 4, 'Terminar App Pronto', 'Dar termino al aplicaion para solicitar titulo de carrera Tecnica', 'Actualizando backend para poder trabajar lado del cliente', 1, 2, '1604286000000', '1605409200000', '2020-11-06 00:23:16', '2020-11-06 01:40:25');
 
 -- --------------------------------------------------------
 
@@ -131,6 +154,12 @@ ALTER TABLE `empresas`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indices de la tabla `estados`
+--
+ALTER TABLE `estados`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `roles`
 --
 ALTER TABLE `roles`
@@ -142,13 +171,15 @@ ALTER TABLE `roles`
 ALTER TABLE `tareas`
   ADD PRIMARY KEY (`id`),
   ADD KEY `FK_tareas_usuarios` (`id_usuario`),
-  ADD KEY `FK_tareas_empresas` (`id_empresa`);
+  ADD KEY `FK_tareas_empresas` (`id_empresa`),
+  ADD KEY `FK_tareas_estados` (`id_estado`);
 
 --
 -- Indices de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `FK_usuarios_roles` (`id_rol`);
 
 --
 -- AUTO_INCREMENT de las tablas volcadas
@@ -161,6 +192,12 @@ ALTER TABLE `empresas`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT de la tabla `estados`
+--
+ALTER TABLE `estados`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
 -- AUTO_INCREMENT de la tabla `roles`
 --
 ALTER TABLE `roles`
@@ -170,7 +207,7 @@ ALTER TABLE `roles`
 -- AUTO_INCREMENT de la tabla `tareas`
 --
 ALTER TABLE `tareas`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
@@ -185,12 +222,15 @@ ALTER TABLE `usuarios`
 --
 -- Filtros para la tabla `tareas`
 --
-ALTER TABLE `usuarios`
-  ADD CONSTRAINT `FK_usuarios_roles` FOREIGN KEY (`id_rol`) REFERENCES `roles` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
 ALTER TABLE `tareas`
   ADD CONSTRAINT `FK_tareas_empresas` FOREIGN KEY (`id_empresa`) REFERENCES `empresas` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `FK_tareas_estados` FOREIGN KEY (`id_estado`) REFERENCES `estados` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `FK_tareas_usuarios` FOREIGN KEY (`id_usuario`) REFERENCES `usuarios` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `usuarios`
+--
+ALTER TABLE `usuarios`
   ADD CONSTRAINT `FK_usuarios_roles` FOREIGN KEY (`id_rol`) REFERENCES `roles` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 COMMIT;
 
